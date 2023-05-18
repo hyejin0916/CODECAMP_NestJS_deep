@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>이벤트루프</title>
+    <script>
+        const onClickLoop = () => {
+            console.log("시작");
+
+            // setTimeout(() => {
+            //     // 싱글 스레드는 setTimeout이라는 함수가 오래걸릴것으로 예상하고 태스크큐에 함수를 미뤄두고 마지막에 실행한다.
+            //     console.log("0초 뒤에 실행될 거에요");
+            // }, 0)
+            
+            let sum = 0;
+            for (let i = 0; i <= 900000000; i++) {
+                sum += i;
+            }
+
+            console.log('끝');
+        }; // 시작 - 끝 - 0초 뒤에 실행될 거에요
+    </script>
+</head>
+<body>
+    <button onclick="onClickLoop()">시작하기</button>
+</body>
+</html>
