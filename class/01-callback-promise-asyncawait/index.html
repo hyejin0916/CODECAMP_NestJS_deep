@@ -1,0 +1,113 @@
+<!-- callback js 실습 -->
+<!-- const aaa = (qqq) => {
+	// 외부 API에 데이터 요청하는 로직
+	// ...
+	// ...
+	// 요청 완료!
+	const result = "요청으로 받아온 데이터 결과값"
+
+	qqq(result) // 요청 끝나면 qqq 실행 시키기
+}
+
+aaa((result) => { // aaa의 매개변수인 qqq에 함수를 인자로 넣는다.
+	console.log("요청으로 끝났습니다.")
+	console.log("요청으로 받아온 데이터는 " + result + "입니다")
+}) //     : 2차적 처리를 위한 로직 -->
+
+<!-- `http://numbersapi.com/random?min=1&max=200` -->
+<!-- `https://koreanjson.com/posts/${num}` -->
+<!-- `https://koreanjson.com/posts?userId=${userId}` -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<title>콜백과 친구들</title>
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<script>
+		const myCallback = () => { // 타고타고 들어가서 함수를 실행하는 것을 "콜백 지옥"이라고 한다
+			const aaa = new XMLHttpRequest();
+			// HTTP 요청 초기화하는 open메서드를 호출하여 HTTP요청 메서드(get)와 url을 작성
+			aaa.open("get", `http://numbersapi.com/random?min=1&max=200`) ;
+			aaa.send(); // HTTP 요청을 전송
+			aaa.addEventListener("load", (res) => { // 이 부분이 콜백 함수
+				console.log(res); // API 요청 결과
+				const num = res.target.response.split(" ")[0]; // 랜덤 숫자
+
+				const bbb = new XMLHttpRequest();
+				bbb.open("get", `https://koreanjson.com/posts/${num}`);
+				bbb.send();
+				bbb.addEventListener("load", (res) => {
+					console.log(res);
+					const userId = JSON.parse(res.target.response).UserId; // parse: 문자열을 객체로
+
+					const ccc = new XMLHttpRequest();
+					ccc.open("get", `https://koreanjson.com/posts?userId=${userId}`);
+					ccc.send();
+					ccc.addEventListener("load", (res) => {
+						console.log(res); // 최종 API 요청 결과
+					});
+				});
+			});
+		}
+
+		// new Promise((성공했을때실행시킬함수, 실패했을때실행시킬함수) => {
+		// 	try {
+		// 		const response = '철수' // 백엔드에서  '철수' 데이터 받아옴
+		// 		성공했을때실행시킬함수(response) // 성공하면 이거 실행
+		// 	} catch(error) {
+		// 		실패했을때실행시킬함수('실패했습니다.')
+		// 	}
+		// })
+		// .then((res) => {
+		// 	console.log(res) // 철수
+		// })
+		// .catch((err) => {
+		// 	console.log(err) // 실패했습니다.
+		// })
+
+		// const axios = {
+		// 	get: new Promise((성공시, 실패시) => {})
+		// }
+
+		const myPromise = () => {
+			console.log("1번째로 실행");
+			axios
+				.get(`http://numbersapi.com/random?min=1&max=200`)
+				.then(res => { // Promise가 지원해주는 then을 사용
+					console.log("2번째로 실행");
+					const num = res.request.response.split(" ")[0];
+					console.log(num);
+					
+					return axios.get(`https://koreanjson.com/posts/${num}`);
+				}).then(res => {
+					console.log("3번째로 실행");
+					console.log(res);
+					userId = res.data.UserId;
+
+					return axios.get(`https://koreanjson.com/posts?userId=${userId}`);
+				}).then(res => {
+					console.log("4번째로 실행");
+					console.log("res",res);
+				})
+			console.log("5번째로 실행");
+		} // 1 -> 5 -> 2 -> 3 -> 4 로 진행됨
+
+		// await은 뒤에 Promise가 있어야 사용할 수 있다.
+		// axios, fetch 등 => 대표적인 Promise(.then, .catch 등의 기능)를 지원하는기능
+		// .then() 활용
+		// await 활용 => (주의) await은 아무데나 붙인다고 뒤에껄 기다리는게 아님
+		const myAsyncAwait = async () => {
+			const first = await axios.get(`http://numbersapi.com/random?min=1&max=200`);
+			const num = first.request.response.split(" ")[0];
+			const second = await axios.get(`https://koreanjson.com/posts/${num}`);
+			const userId = second.data.UserId;
+			const third = await axios.get(`https://koreanjson.com/posts?userId=${userId}`);
+			console.log("마지막 출력 결과", third);
+		}
+	</script>
+</head>
+<body>
+	<button onclick="myCallback()">Callback 연습하기</button>
+	<button onclick="myPromise()">Promise 연습하기</button>
+	<button onclick="myAsyncAwait()">AsyncAwait연습하기</button>
+</body>
+</html>
