@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>이벤트루프</title>
+    <script>
+        // 마이크로큐가 급한 애들: 먼저 나와야 함, 매크로큐가 먼저 들어왔고 개수가 많아도 후에 들어간 마이크로큐를 우선으로 빠져나감
+        // 마이크로큐와 매크로큐는 각각 존재하며, 순서는 마이크로큐가 우선
+        const onClickLoop = () => {
+            console.log("시작");
+
+            // 비동기 작업(매크로큐에 들어감)
+            setTimeout(() => {
+                // 비동기 작업(마이크로큐에 들어감)
+                new Promise((resolve) => resolve('철수')).then(()=>{
+                    console.log('저는 Promise(setTimeout 안에서 실행될 거에요)')
+                });
+
+                // 싱글 스레드는 setTimeout이라는 함수가 오래걸릴것으로 예상하고 태스크큐에 함수를 미뤄두고 마지막에 실행한다.
+                console.log("저는 setTimeout! 매크로큐! 0초 뒤에 실행될 거에요");
+            }, 0);
+
+            // 비동기 작업(마이크로큐에 들어감)
+            new Promise((resolve) => resolve('철수')).then(()=>{
+                console.log('저는 Promise(1)! 마이크로큐! 0초뒤에 실행될 거에요')
+            });
+
+            // 비동기 작업(매크로큐에 들어감)
+            setInterval(() => {
+                console.log('저는 setInterval! 매크로큐! 0초마다 실행될거에요')
+            }, 0);
+            
+            let sum = 0;
+            for (let i = 0; i <= 900000000; i++) {
+                sum += i;
+            }
+
+            // 비동기 작업(마이크로큐에 들어감)
+            new Promise((resolve) => resolve('철수')).then(()=>{
+                console.log('저는 Promise(2)! 마이크로큐! 0초뒤에 실행될 거에요')
+            });
+
+            console.log('끝');
+        }; //
+    </script>
+</head>
+<body>
+    <button onclick="onClickLoop()">시작하기</button>
+</body>
+</html>
