@@ -15,6 +15,7 @@
         async function bbb() {
           console.log("bbb-시작");
           await ccc(); // 힌트: ccc()가 먼저 실행되고 await가 진행됩니다.
+          // await은 뒤에것을 먼저 실행하고 마이크로큐에 들어간다.
           console.log("bbb-끝");
         }
 
