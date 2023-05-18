@@ -77,6 +77,10 @@ aaa((result) => { // aaa의 매개변수인 qqq에 함수를 인자로 넣는다
 					const num = res.request.response.split(" ")[0];
 					console.log(num);
 					
+					// axios.get(`https://koreanjson.com/posts/${num}`).then(res=>{}).catch(err=>{})
+					// 위의 형식을
+					// return axios.get(`https://koreanjson.com/posts/${num}`)으로 바꿔주면 한단계 바깥에 .then와 .catch 사용 가능
+					// callback 지옥보다 더 타고 들어가야하는 axios의 구조를 보완해서 깔끔하게 코드 정리 가능
 					return axios.get(`https://koreanjson.com/posts/${num}`);
 				}).then(res => {
 					console.log("3번째로 실행");
@@ -89,7 +93,7 @@ aaa((result) => { // aaa의 매개변수인 qqq에 함수를 인자로 넣는다
 					console.log("res",res);
 				})
 			console.log("5번째로 실행");
-		} // 1 -> 5 -> 2 -> 3 -> 4 로 진행됨
+		} // 문제점: 1 -> 5 -> 2 -> 3 -> 4 로 진행됨
 
 		// await은 뒤에 Promise가 있어야 사용할 수 있다.
 		// axios, fetch 등 => 대표적인 Promise(.then, .catch 등의 기능)를 지원하는기능
